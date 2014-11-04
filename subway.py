@@ -43,8 +43,8 @@ def get_distance_from_baidu(start, end):
     url = 'http://map.baidu.com/?newmap=1&reqflag=pcmap&biz=1&from=webmap&qt=bt&da_src=pcmappg.searchBox.button&c=131&sn=2$$$$$${start}$$0$$$$&en=2$$$$$${end}$$0$$$$&sc=131&ec=131&rn=5&exptype=dep&exptime=2014-11-02%2017:10&version=5&tn=B_NORMAL_MAP&nn=0&ie=utf-8&l=13&b=(12944392.254999999,4849774.095000001;12971560.254999999,4850094.095000001)&t=1414923533275'.format(start=start, end=end)
     r = requests.get(url)
     json_data =  simplejson.loads(r.text)
-    contents =  json_data['content']#exts,line,stop info .etc
     try:
+        contents =  json_data['content']#exts,line,stop info .etc
         exts = contents[0]['exts']
         distance = exts[0].get('distance')
         return  distance
@@ -95,19 +95,37 @@ def get_station_pair():
     # return station_pair_set
 # get_station_pair()
 
+
+def failed_crawled_station():
+    '''crawl failed station for the second time'''
+    failed_station_list = []
+    filename = os.path.join(PATH, 'failed_crawled_station')
+    with open(filename) as f:
+        for line in f.readlines():
+            splited_line = line.split('\t')
+            start = splited_line[0]
+            end = splited_line[1].strip()
+            if start != end:
+                failed_station_list.append(line)
+    # print len(failed_station_list)
+    return failed_station_list
+# failed_crawled_station()
+
 def crawl_distance_bewteen_two_station():
-    station_pair_filename = os.path.join(PATH, 'total_station_pair_name')
+    station_pair_filename = os.path.join(PATH, 'failed_crawled_station2')
     start_end_distance_filename = os.path.join(PATH, 'start_end_distance')
-    failed_cralwd_filename = os.path.join(PATH, 'failed_crawled_station')
+    failed_cralwd_filename = os.path.join(PATH, 'failed_crawled_station3')
     with codecs.open(station_pair_filename) as f, \
-    codecs.open(start_end_distance_filename, mode='wb') as wf,\
-    codecs.open(failed_cralwd_filename, mode='wb') as failed_obj:
+    codecs.open(start_end_distance_filename, mode='a') as wf,\
+    codecs.open(failed_cralwd_filename, mode='a') as failed_obj:
         count = 0
         for line in f.readlines():
             count += 1
             splited_line = line.split('\t')
             start = splited_line[0]
             end = splited_line[-1].strip()
+            if start == end:
+                continue
             distance = get_distance_from_baidu(start, end)
             if distance:
                 print count, start, end, distance
