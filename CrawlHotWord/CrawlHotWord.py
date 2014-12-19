@@ -18,7 +18,7 @@ def baidu_crawl_one_page_url():
     '''抓取指定百度热词url'''
     topic_url = 'http://top.baidu.com/buzz?b=495&c=31'
     no_num_pattern = re.compile(ur"([^\u4E00-\u9FA5]+)", re.U)
-    html = urllib2.urlopen(topic_url).read()
+    html = urllib2.urlopen(topic_url, timeout = 60).read()
     soup = BeautifulSoup(html)
     keyword_list = [keyword_str.find('a').text.strip() for keyword_str in soup.find_all('td', class_='keyword')]
     # print len(keyword_list)
@@ -44,7 +44,7 @@ def sina_topicUrl_topicTitle():
     '''抓取新浪topic_url与topic_title所构成的tuple的数组'''
     sina_url = 'http://top.weibo.com'
     sina_base_url = 'http://top.weibo.com/newtop/keyword'
-    html = urllib2.urlopen(sina_base_url).read()
+    html = urllib2.urlopen(sina_base_url, timeout = 60).read()
     soup = BeautifulSoup(html)
     div_level_str = soup.find('div', id='pl_index_toplist')
     dl_level_str_list = div_level_str.find_all('dl', class_='bd_list clearfix')
@@ -80,15 +80,15 @@ class HotWordCrawler:
                 topic_title = splited_line[-1].strip()
                 timestamp = time.strftime('%Y_%m_%d_%H:%M:%S')
                 try:
-                    html = urllib2.urlopen(topic_url).read()
+                    html = urllib2.urlopen(topic_url, timeout = 60).read()
                 except:
                     time.sleep(120)
                     try:
-                        html = urllib2.urlopen(topic_url).read()
+                        html = urllib2.urlopen(topic_url, timeout = 60).read()
                     except:
                         time.sleep(120)
                         try:
-                            html = urllib2.urlopen(topic_url).read()
+                            html = urllib2.urlopen(topic_url, timeout = 60).read()
                         except:
                             self.logObj.write('baidu_spider %(timestamp)s timed out in url;%(topic_url)s\n'%{'timestamp':timestamp,'topic_url':topic_url})
                             continue
@@ -154,15 +154,15 @@ class HotWordCrawler:
             topic_url = topicUrl_topicTitle_tuple[0]
             topic_title = topicUrl_topicTitle_tuple[-1]
             try:
-                html = urllib2.urlopen(topic_url).read()
+                html = urllib2.urlopen(topic_url, timeout = 60).read()
             except BaseException:
                 time.sleep(120)
                 try:
-                    html = urllib2.urlopen(topic_url).read()
+                    html = urllib2.urlopen(topic_url, timeout = 60).read()
                 except BaseException:
                     time.sleep(120)
                     try:
-                        html = urllib2.urlopen(topic_url).read()
+                        html = urllib2.urlopen(topic_url, timeout = 60).read()
                     except BaseException:
                         self.logObj(self.logObj.write('sina_spider %(timestamp)s timed out in url;%(topic_url)s\n'%{'timestamp':timestamp,'topic_url':topic_url}))
                         continue
