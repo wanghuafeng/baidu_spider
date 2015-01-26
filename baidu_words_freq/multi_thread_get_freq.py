@@ -57,23 +57,28 @@ class FreqCrawler(object):
             wf.writelines(self.word_freq_list)
 
     def main(self):
-
-        threads = []
+        '''使用gevent多线程抓取'''
+        threads = []#要执行的线程
         words_count = len(self.words_list)
-        thread_count = 10000
+        thread_count = 10000#线程数量
 
-        words_list_split_section = int(ceil(words_count/float(thread_count)))
-        for section_sequence in range(words_list_split_section):
-            for word_point in range(thread_count*section_sequence, (section_sequence+1)*thread_count):
+        words_list_partial_count = int(ceil(words_count/float(thread_count)))
+        for section_sequence in range(words_list_partial_count):
+            if section_sequence == words_count - 1:#保证所有的数组内元素都会被使用到
+                range_start, range_end = thread_count*section_sequence, words_count
+            else:
+                range_start, range_end = thread_count*section_sequence, (section_sequence +1)*thread_count
+
+            for word_point in range(range_start, range_end):
                 word = self.words_list[word_point]
                 threads.append(gevent.spawn(self.read_item_url, word))
             gevent.joinall(threads)
 
+
             self.write_wrod_freq()
             self.word_freq_list[:] = []
-
             time.sleep(2)
 
-freqspider = FreqCrawler()
+freqspider = FreqCrawler('filename.txt')
 freqspider.main()
 

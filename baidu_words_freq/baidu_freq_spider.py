@@ -115,7 +115,7 @@ if __name__ == "__main__":
         freq_crawler.get_freq_by_file()
     else:
         print 'USAGE: -f filename'
-        
+
     def main_test():
         '''主函数测试'''
         src_filename = r'F:\github\Spider_baidu\baidu_words_freq\New_Word.txt'
