@@ -8,4 +8,4 @@
 ####baidu_words_freq:
 1、抓取百度词频
 ####baidu_poi:
-1、百度poi信息（多线程使用Queue进行多线程间通讯）
+1、百度poi信息（多线程使用Queue进行线程间通讯）
