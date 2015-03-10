@@ -3,8 +3,8 @@ from pymongo import MongoClient
 import codecs
 class MongoDB:
     def __init__(self):
-        self.client = MongoClient('192.168.0.253')
-        self.db = self.client['hotword']
+        self.client = MongoClient('ip')
+        self.db = self.client['collection']
         
     def update_word(self,word, source, category,doc):
         update_doc = {'$set': {source + '.' + category: doc}}
